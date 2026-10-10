@@ -30,6 +30,7 @@ func (a *PlugApplication) Init(
 	s3_host,
 	s3_access_id,
 	s3_secret_key,
+	s3_bucket_name,
 	ldap_host,
 	ldap_bind_dn,
 	ldap_bind_pw,
@@ -48,7 +49,8 @@ func (a *PlugApplication) Init(
 	// S3 Connection
 	a.s3.Init(s3_host,
 		s3_access_id,
-		s3_secret_key)
+		s3_secret_key,
+		s3_bucket_name)
 
 	// LDAP connection
 	a.ldap.Init(a, ldap_host, ldap_bind_dn, ldap_bind_pw)
@@ -91,16 +93,17 @@ func main() {
 		os.Getenv("S3_HOST"),
 		os.Getenv("S3_ACCESS_ID"),
 		os.Getenv("S3_SECRET_KEY"),
+		os.Getenv("S3_BUCKET_NAME"),
 		os.Getenv("LDAP_HOST"),
 		os.Getenv("LDAP_BIND_DN"),
 		os.Getenv("LDAP_BIND_PW"),
 		os.Getenv("BASE_PATH"),
-		os.Getenv("csh_auth_client_id"),
-		os.Getenv("csh_auth_client_secret"),
-		os.Getenv("csh_auth_jwt_secret"),
-		os.Getenv("csh_auth_state"),
-		os.Getenv("csh_auth_server_host"),
-		os.Getenv("csh_auth_redirect_uri"),
+		os.Getenv("CSH_AUTH_CLIENT_ID"),
+		os.Getenv("CSH_AUTH_CLIENT_SECRET"),
+		os.Getenv("CSH_AUTH_JWT_SECRET"),
+		os.Getenv("CSH_AUTH_STATE"),
+		os.Getenv("CSH_AUTH_SERVER_HOST"),
+		os.Getenv("CSH_AUTH_REDIRECT_URI"),
 		"/auth/login",
 	)
 

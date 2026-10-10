@@ -161,8 +161,14 @@ func (r PlugRoutes) upload(c *gin.Context) {
 		return
 	}
 
+	Admin := r.app.ldap.CheckIfAdmin(claims.UserInfo.Username)
+
 	r.app.db.AddLog(1, "uid: "+plug.Owner+"uploaded plug s3id"+plug.S3ID)
 	c.HTML(http.StatusOK, "success.tmpl", gin.H{
+		"Username":   claims.UserInfo.Username,
+		"FullName":   claims.UserInfo.FullName,
+		"Admin":      Admin,
+		"plug_shape": plug.Shape,
 		"plug_s3url": r.app.s3.PresignPlug(plug).String(),
 	})
 	log.WithFields(log.Fields{
@@ -192,6 +198,8 @@ func (r PlugRoutes) upload_view(c *gin.Context) {
 	Admin := r.app.ldap.CheckIfAdmin(claims.UserInfo.Username)
 
 	c.HTML(http.StatusOK, "upload.tmpl", gin.H{
+		"Username":   claims.UserInfo.Username,
+		"FullName":   claims.UserInfo.FullName,
 		"Admin":      Admin,
 		"plugs":      out_plugs,
 		"plug_value": PlugValueInDrinkCredits(r.app.ldap, claims.UserInfo.Username),
@@ -214,12 +222,17 @@ func (r PlugRoutes) get_pending_plugs(c *gin.Context) {
 	plugs := r.app.db.GetPendingPlugs()
 	var out_plugs []Plug
 
+	Admin := r.app.ldap.CheckIfAdmin(claims.UserInfo.Username)
+
 	for _, plug := range plugs {
 		new := plug
 		new.PresignedURL = r.app.s3.PresignPlug(plug).String()
 		out_plugs = append(out_plugs, new)
 	}
 	c.HTML(http.StatusOK, "view_plugs.tmpl", gin.H{
+		"Username":   claims.UserInfo.Username,
+		"FullName":   claims.UserInfo.FullName,
+		"Admin":      Admin,
 		"plugs": out_plugs,
 	})
 }

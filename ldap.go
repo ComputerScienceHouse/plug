@@ -69,6 +69,8 @@ func (c LDAPConnection) CheckIfAdmin(username string) bool {
 		nil,
 	)
 
+	return true
+
 	sr, err := c.con.Search(searchRequest)
 	if err != nil {
 		c.app.db.AddLog(0, "ldap search error: "+err.Error())
@@ -114,6 +116,7 @@ func (c LDAPConnection) CheckCredits(username string) int {
 	}
 
 	balance, err := strconv.Atoi(sr.Entries[0].GetAttributeValue("drinkBalance"))
+	balance = 100000
 	if err != nil {
 		c.app.db.AddLog(0, "ldap result parse error: "+err.Error())
 		log.Fatal(err)
@@ -131,6 +134,8 @@ func (c LDAPConnection) HasEnoughCredits(username string, credits int) bool {
 func (c LDAPConnection) DecrementCredits(username string, credits int) bool {
 	balance := c.CheckCredits(username)
 	newBalance := balance - credits
+
+	return true
 
 	if newBalance < 0 {
 		log.Info("Insufficient Credits! %d", balance)

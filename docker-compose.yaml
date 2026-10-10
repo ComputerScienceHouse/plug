@@ -1,0 +1,44 @@
+services:
+  plug:
+    build: .
+    volumes:
+      - ./migrations:/opt/conditional/migrations
+    container_name: plug
+    depends_on:
+      plug-postgres:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - BASE_PATH=/
+    ports:
+      - "127.0.0.1:8080:8080"
+    develop:
+      watch:
+        - action: sync+restart
+          target: /templates
+          path: ./templates
+        - action: sync+restart
+          target: /static
+          path: ./static
+
+  plug-postgres:
+    image: docker.io/postgres
+    container_name: plug-postgres
+    environment:
+      POSTGRES_PASSWORD: fancypantspassword
+      POSTGRES_USER: plug
+      POSTGRES_DATABASE: plug
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plug"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
