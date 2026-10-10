@@ -9,23 +9,26 @@ import (
 )
 
 type LDAPConnection struct {
-	app     *PlugApplication
-	con     *ldap.Conn
-	host    string
-	bind_dn string
-	bind_pw string
+	app       *PlugApplication
+	con       *ldap.Conn
+	host      string
+	bind_dn   string
+	bind_pw   string
+	writeMode bool
 }
 
 func (c *LDAPConnection) Init(
 	app *PlugApplication,
 	host,
 	bind_dn,
-	bind_pw string) {
+	bind_pw string,
+	write_mode string) {
 
 	c.app = app
 	c.host = host
 	c.bind_dn = bind_dn
 	c.bind_pw = bind_pw
+	c.writeMode = write_mode == "true"
 
 	c.reconnectToLDAP()
 }
@@ -68,8 +71,6 @@ func (c LDAPConnection) CheckIfAdmin(username string) bool {
 		[]string{"uid"},
 		nil,
 	)
-
-	return true
 
 	sr, err := c.con.Search(searchRequest)
 	if err != nil {
@@ -116,7 +117,6 @@ func (c LDAPConnection) CheckCredits(username string) int {
 	}
 
 	balance, err := strconv.Atoi(sr.Entries[0].GetAttributeValue("drinkBalance"))
-	balance = 100000
 	if err != nil {
 		c.app.db.AddLog(0, "ldap result parse error: "+err.Error())
 		log.Fatal(err)
@@ -132,10 +132,12 @@ func (c LDAPConnection) HasEnoughCredits(username string, credits int) bool {
 }
 
 func (c LDAPConnection) DecrementCredits(username string, credits int) bool {
+	if !c.writeMode {
+		return true
+	}
+
 	balance := c.CheckCredits(username)
 	newBalance := balance - credits
-
-	return true
 
 	if newBalance < 0 {
 		log.Info("Insufficient Credits! %d", balance)

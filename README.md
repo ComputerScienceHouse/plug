@@ -7,7 +7,6 @@ Development
 -----------
 
 ## Running 
-
 It is likely easier to use containers like `podman` or `docker` or the corresponding compose file
 
 With podman, I have been using 
@@ -23,7 +22,6 @@ podman compose up --force-recreate --build
 Which can be restarted every time changes are made.
 
 ## Config
-
 To easily configure your workspace, copy the `.env.example` into a new `.env` file.
 
 ### Add OIDC Config
@@ -70,3 +68,11 @@ S3_HOST=s3.csh.rit.edu
 You can either develop using the dev database, or use the local database provided in the docker compose file
 
 Using the local database is detailed below, but both options will require the dev database password, so you will have to ask an RTP for this too
+
+## Testing Locally
+
+### Admin Dashboard Access
+Modify the `CheckIfAdmin` function in `ldap.go` to always return true which will grant you admin access.
+
+### Drink Credits
+Modify the `DecrementCredits` function in `ldap.go` to give yourself credits if your account doesn't have them already.

@@ -34,6 +34,7 @@ func (a *PlugApplication) Init(
 	ldap_host,
 	ldap_bind_dn,
 	ldap_bind_pw,
+	ldap_write_mode,
 	base_path,
 	auth_client_id,
 	auth_client_secret,
@@ -53,7 +54,7 @@ func (a *PlugApplication) Init(
 		s3_bucket_name)
 
 	// LDAP connection
-	a.ldap.Init(a, ldap_host, ldap_bind_dn, ldap_bind_pw)
+	a.ldap.Init(a, ldap_host, ldap_bind_dn, ldap_bind_pw, ldap_write_mode)
 
 	a.base_path = base_path
 	a.router = a.createGinEngine()
@@ -97,6 +98,7 @@ func main() {
 		os.Getenv("LDAP_HOST"),
 		os.Getenv("LDAP_BIND_DN"),
 		os.Getenv("LDAP_BIND_PW"),
+		os.Getenv("LDAP_WRITE_MODE"),
 		os.Getenv("BASE_PATH"),
 		os.Getenv("CSH_AUTH_CLIENT_ID"),
 		os.Getenv("CSH_AUTH_CLIENT_SECRET"),
