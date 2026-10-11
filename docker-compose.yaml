@@ -19,9 +19,6 @@ services:
         - action: sync+restart
           target: /templates
           path: ./templates
-        - action: sync+restart
-          target: /static
-          path: ./static
 
   plug-postgres:
     image: docker.io/postgres

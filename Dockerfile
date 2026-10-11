@@ -8,5 +8,4 @@ FROM alpine:latest
 
 COPY --from=builder /build/csh-plug .
 COPY ./templates ./templates
-COPY ./static ./static
 ENTRYPOINT ["./csh-plug"]
