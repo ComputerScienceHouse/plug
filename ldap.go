@@ -3,9 +3,11 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"strconv"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/ldap.v2"
-	"strconv"
 )
 
 type LDAPConnection struct {
@@ -28,7 +30,7 @@ func (c *LDAPConnection) Init(
 	c.host = host
 	c.bind_dn = bind_dn
 	c.bind_pw = bind_pw
-	c.writeMode = write_mode == "true"
+	c.writeMode = strings.ToLower(write_mode) == "true"
 
 	c.reconnectToLDAP()
 }
