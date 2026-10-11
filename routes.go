@@ -213,7 +213,9 @@ func (r PlugRoutes) get_pending_plugs(c *gin.Context) {
 		return
 	}
 
-	if !r.app.ldap.CheckIfAdmin(claims.UserInfo.Username) {
+	Admin := r.app.ldap.CheckIfAdmin(claims.UserInfo.Username)
+
+	if !Admin {
 		log.Info("Not authorized.")
 		c.Redirect(http.StatusFound, "/")
 		return
@@ -221,8 +223,6 @@ func (r PlugRoutes) get_pending_plugs(c *gin.Context) {
 
 	plugs := r.app.db.GetPendingPlugs()
 	var out_plugs []Plug
-
-	Admin := r.app.ldap.CheckIfAdmin(claims.UserInfo.Username)
 
 	for _, plug := range plugs {
 		new := plug
