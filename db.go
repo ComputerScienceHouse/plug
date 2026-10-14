@@ -34,9 +34,9 @@ VALUES ($1::text, $2::text, $3::integer, false, $4::text)`
 
 const SQL_RETRIEVE_APPROVED_PLUGS = `SELECT id, s3id, owner, views FROM plugs WHERE approved=true`
 
-const SQL_RETRIEVE_APPROVED_BANNER_PLUGS = `SELECT id, s3id, owner, views FROM plugs WHERE approved=true AND shape='banner'`
+const SQL_RETRIEVE_APPROVED_BANNER_PLUGS = `SELECT id, s3id, owner, views FROM plugs WHERE approved=true AND shape='banner' AND views !=0`
 
-const SQL_RETRIEVE_APPROVED_VERT_PLUGS = `SELECT id, s3id, owner, views FROM plugs WHERE approved=true AND shape='vert'`
+const SQL_RETRIEVE_APPROVED_VERT_PLUGS = `SELECT id, s3id, owner, views FROM plugs WHERE approved=true AND shape='vert' AND views !=0`
 
 const SQL_RETRIEVE_PLUG_BY_ID = `SELECT s3id, owner, views, approved FROM plugs WHERE id=$1::integer`
 
@@ -126,11 +126,6 @@ func (c DBConnection) GetPlug(shape string) Plug {
 		if err != nil {
 			log.Error(err)
 		}
-	}
-	if finalPlug.ViewsRemaining == 0 {
-		c.DeletePlug(finalPlug)
-		// try again
-		return c.GetPlug(shape)
 	}
 
 	return finalPlug
