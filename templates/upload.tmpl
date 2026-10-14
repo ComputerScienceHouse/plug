@@ -1,58 +1,7 @@
-<html>
-
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
-    <link rel="stylesheet" href="https://themeswitcher.csh.rit.edu/api/get" media="screen">
-    <link rel="stylesheet" href="/static/plug.css">
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/upload">Plug</a>
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/upload">Upload</a>
-                </li>
-                {{ if .Admin }}
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin">Admin<span class="sr-only">(current)</span></a>
-                </li>
-                {{ end }}
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h2>My Plugs:</h2>
-        <p>Plugs displayed below without color have not been approved for viewing yet.</p>
-        {{ range $element := .plugs }}
-        <div class="row justify-content-center">
-            <div class="col-lg-7">
-                <div class="card mb-3">
-
-                    {{ if eq $element.Shape "vert" }} 
-                    <div style="display: flex; justify-content: center;">
-                    {{ end }}
-
-                    <!-- Make plugs which haven't been approved yet grayscale -->
-                    <img class="{{$element.Shape}}" style="
-                    {{ if not $element.Approved }} filter: grayscale(100%); {{ end }}
-                    " src="{{$element.PresignedURL}}" alt="Plug by {{$element.Owner}}">
-                    {{ if eq $element.Shape "vert" }}
-                    </div>
-                    {{ end }}
-                    <div class="card-footer text-muted">
-                        <p>{{$element.ViewsRemaining}} View(s) Remaining</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{ end }}
-    </div>
-    <div class="jumbotron">
-        <div class="row justify-content-center">
-            <div class="col-lg-7">
+{{ template "header.tmpl" . }}
+    <div class="container main mt-4">
+        <div class="card-body row justify-content-center">
+            <div class="card mb-4 bg-body-tertiary col-lg-7 p-4">
                 <h2>Upload a Plug!</h2>
                 <p class="lead">You will lose 1 drink credit in exchange for a {{ .plug_value }} view-limit of your plug.<br> Banner Plugs must be 728x200 pixels. <br> Vertical Plugs must be 200x728 pixels. <br> Plugs must be in GIF, PNG, or JPG format.<br>The name of the file can only be at most 41 characters.</p>
                 <hr class="my-4">
@@ -68,12 +17,50 @@
                         <input class="form-control-file" id="fileUpload" name="fileUpload" aria-describedby="fileHelp" type="file">
                         <small id="fileHelp" class="form-text text-muted">Your Plug must be approved before it will appear for viewing. Any member of the following groups (drink, eboard, rtp) can do so via the admin page.</small>
                     </div>
-                    <div class="float-right">
-                        <input class="btn btn-primary btn-lg" href="/upload" role="button" value="Upload" name="submit" type="submit">
+                    <div class="float-end">
+                        <input class="btn btn-primary btn-md" href="/upload" role="button" value="Upload" name="submit" type="submit">
                     </div>
                 </form>
             </div>
         </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <h2>My Plugs:</h2>
+                <p>Plugs displayed below without color have not been approved for viewing yet.</p>
+            </div>
+        </div>
+
+        {{ range $element := .plugs }}
+        <div class="row justify-content-center">
+            <div class="col-lg-7 p-0">
+                <div class="card mb-3">
+                    <div class="card-header"></div>
+
+                    {{ if eq $element.Shape "vert" }} 
+                    <div style="display: flex; justify-content: center;">
+                    {{ end }}
+
+                    <!-- Make plugs which haven't been approved yet grayscale -->
+                    <img class="{{$element.Shape}}" style="
+                    {{ if not $element.Approved }} filter: grayscale(100%); {{ end }}
+                    " src="{{$element.PresignedURL}}" alt="Plug by {{$element.Owner}}">
+                    {{ if eq $element.Shape "vert" }}
+                    </div>
+                    {{ end }}
+                    <div class="card-footer text-muted d-flex align-items-center justify-content-between">
+                        {{ if $element.Approved }}
+                            <span class="badge text-bg-success" style="margin-left: -0.5em;">Approved</span>
+                        {{ else }}
+                            <span class="badge text-bg-warning" style="margin-left: -0.5em;">Pending Approval</span>
+                        {{ end }}
+
+                        {{$element.ViewsRemaining}} View(s) Remaining
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ end }}
     </div>
 
     <div class="modal" id="agreementModal">
@@ -87,27 +74,19 @@
                     <p>Please review the <a href="https://github.com/ComputerScienceHouse/CodeOfConduct" target="_blank">CSH Code Of Conduct</a> before uploading content to Plug.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Agree</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Agree</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div>
-    </div>
-
-    <footer class="footer">
-        <div class="container">
-            <span class="text-muted">CSH Plug on <a href="https://github.com/computersciencehouse/csh-plug">GitHub</a></span>
-        </div>
+    <footer class="text-center mt-5 mb-4">
+        <span class="text-muted">CSH Plug on <a href="https://github.com/computersciencehouse/csh-plug">GitHub</a></span>
     </footer>
 
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
     <script>
-        $('#agreementModal').modal('show')
+      new bootstrap.Modal(document.querySelector('#agreementModal')).show();
     </script>
 
 </body>
