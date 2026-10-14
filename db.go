@@ -115,6 +115,10 @@ func (c DBConnection) GetPlug(shape string) Plug {
 			log.Error(err)
 		}
 
+		if obj.ViewsRemaining == 0 {
+			continue
+		}
+
 		plugs = append(plugs, obj)
 	}
 	finalPlug := ChoosePlug(plugs)
@@ -126,11 +130,6 @@ func (c DBConnection) GetPlug(shape string) Plug {
 		if err != nil {
 			log.Error(err)
 		}
-	}
-	if finalPlug.ViewsRemaining == 0 {
-		c.DeletePlug(finalPlug)
-		// try again
-		return c.GetPlug(shape)
 	}
 
 	return finalPlug
