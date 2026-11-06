@@ -13,7 +13,7 @@ type S3Connection struct {
 	bucket string
 }
 
-func (c *S3Connection) Init(host, access, secret, bucket string) {
+func (c *S3Connection) Init(host string, access string, secret string, bucket string) {
 	s3, err := minio.NewV2(host, access, secret, true)
 	if err != nil {
 		log.Fatal(err)
