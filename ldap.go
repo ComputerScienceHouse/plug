@@ -3,29 +3,34 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"strconv"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/ldap.v2"
-	"strconv"
 )
 
 type LDAPConnection struct {
-	app     *PlugApplication
-	con     *ldap.Conn
-	host    string
-	bind_dn string
-	bind_pw string
+	app       *PlugApplication
+	con       *ldap.Conn
+	host      string
+	bind_dn   string
+	bind_pw   string
+	writeMode bool
 }
 
 func (c *LDAPConnection) Init(
 	app *PlugApplication,
 	host,
 	bind_dn,
-	bind_pw string) {
+	bind_pw string,
+	write_mode string) {
 
 	c.app = app
 	c.host = host
 	c.bind_dn = bind_dn
 	c.bind_pw = bind_pw
+	c.writeMode = strings.ToLower(write_mode) == "true"
 
 	c.reconnectToLDAP()
 }
@@ -129,6 +134,10 @@ func (c LDAPConnection) HasEnoughCredits(username string, credits int) bool {
 }
 
 func (c LDAPConnection) DecrementCredits(username string, credits int) bool {
+	if !c.writeMode {
+		return true
+	}
+
 	balance := c.CheckCredits(username)
 	newBalance := balance - credits
 
