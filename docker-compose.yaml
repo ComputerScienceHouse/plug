@@ -21,7 +21,7 @@ services:
           path: ./templates
 
   plug-postgres:
-    image: docker.io/postgres
+    image: docker.io/postgres:18
     container_name: plug-postgres
     environment:
       POSTGRES_PASSWORD: fancypantspassword
